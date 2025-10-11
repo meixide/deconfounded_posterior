@@ -1,6 +1,7 @@
 # Predictive Posteriors under Hidden Confounding
 
 A Bayesian framework for robust prediction across external domains in the presence of hidden confounders. This repository contains the implementation and reproducible code for our method, which provides well-calibrated predictive distributions with principled uncertainty quantification.
+By Carlos García Meixide and David Ríos Insua
 
 ## Overview
 
@@ -8,10 +9,10 @@ Predicting outcomes in external domains remains a fundamental challenge when hid
 
 Our approach addresses these limitations by introducing a Bayesian framework that:
 
-- ✨ **Generates well-calibrated predictive distributions** across unseen domains
-- 🎯 **Supports valid model inference** without sacrificing identifiability
-- 📈 **Achieves improved posterior contraction rates** as the number of observed datasets increases
-- 🔬 **Maintains empirical coverage** from low- to moderate-dimensional settings
+- **Generates well-calibrated predictive distributions** across unseen domains
+- **Supports valid model inference** 
+- **Achieves improved posterior contraction rates** as the number of observed datasets increases
+- **Maintains empirical coverage** from low- to moderate-dimensional settings
 
 ## Repository Structure
 
@@ -36,11 +37,6 @@ Our approach addresses these limitations by introducing a Bayesian framework tha
 
 ### Running the Examples
 
-**Basic exploration:**
-```r
-source("basic.R")
-```
-
 **Large-scale simulations:**
 
 For HPC environments, launch parallel simulations with:
@@ -61,14 +57,6 @@ Where:
 
 ## Method Highlights
 
-Our Bayesian framework circumvents the limitations of existing approaches by:
-
-1. **Avoiding restrictive assumptions** about distribution shifts
-2. **Providing model identifiability** where prior methods fall short
-3. **Offering principled uncertainty quantification** through full posterior inference
-4. **Scaling effectively** to moderate-dimensional settings
-
-Empirical results demonstrate remarkable coverage properties that remain stable across different dimensionality regimes.
 
 ## Citation
 
