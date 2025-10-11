@@ -62,23 +62,11 @@ Where:
 
 If you use this code in your research, please cite:
 
-```bibtex
-@article{your_paper,
-  title={Bayesian Generalization under Hidden Confounding},
-  author={Your Name},
-  journal={Journal Name},
-  year={2025}
-}
-```
-
-## License
-
-[Specify your license here]
 
 ## Contact
 
-For questions or issues, please open an issue on GitHub or contact [your contact information].
+For questions or issues, please open an issue on GitHub or contact the authors.
 
 ---
 
-**Note:** This implementation focuses on principled statistical inference for domain generalization under hidden confounding. For production applications, consider computational optimizations based on your specific use case.
+*
