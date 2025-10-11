@@ -38,7 +38,7 @@ stan_data <- list(
 library(rstan)
 # Fit the Stan model
 fit <- stan(
-  file = "zero_prior.stan",
+  file = "unit_variance.stan",
   data = stan_data,
   chains = 4,
   iter = 2000,
