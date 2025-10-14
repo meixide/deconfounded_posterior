@@ -3,6 +3,10 @@
 A Bayesian framework for robust prediction across external domains in the presence of hidden confounders. This repository contains the implementation and reproducible code for our method, which provides well-calibrated predictive distributions with principled uncertainty quantification.
 By Carlos García Meixide and David Ríos Insua
 
+![Posteriors]("post_beta.png")
+*Progressive hypothesis violation*
+
+
 ## Overview
 
 Predicting outcomes in external domains remains a fundamental challenge when hidden confounders influence both predictors and outcomes. Traditional methods often require stringent assumptions, prior knowledge of distribution shifts, or rely on regularization strategies that compromise both estimation and predictive accuracy.
