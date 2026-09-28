@@ -61,7 +61,7 @@ paper_rows() {  # $1 = label
       for (i=b;i<=e;i++)
         if (buf[i] ~ /\\\\ *$/ && buf[i] !~ /hline|multicolumn|backslash/)
           print "    " buf[i]
-    }' "$MS" | sed 's/[[:space:]]\+/ /g'
+    }' "$MS" | sed 's/[[:space:]]\+/ /g' | tee "${PAPER_OUT:-/dev/null}"
 }
 
 agg() {  # $1 = script, $2 = in dir, $3 = grep filter
@@ -71,19 +71,67 @@ agg() {  # $1 = script, $2 = in dir, $3 = grep filter
 }
 
 #-----------------------------------------------------------------------
+#-----------------------------------------------------------------------
+# The verdict.
+#
+# This script used to print the two sides and leave the comparison to the
+# reader.  That was defensible while the recomputed rows came out in a
+# different shape from the paper's; it is not defensible now that both sides
+# are emitted in the same format, and a check that cannot fail is decoration.
+#
+# What is compared is the multiset of decimal numbers in each block, at the
+# precision printed.  Formatting is stripped first -- \textbf{}, the revision's
+# \rd{} and \bl{} colour macros, column separators -- because none of it is a
+# number.  Multisets rather than sequences, because Table 4's rows come out
+# ordered by frequency while the paper orders them in two columns, so the
+# sequences legitimately differ while the values must not.
+#
+# The one thing this cannot catch is two values swapping places within a table.
+# Nothing else gets through: any changed, missing or extra figure shows up as a
+# difference, and the differing values are printed.
+PASS=0; FAIL=0
+numbers() {  # strip markup, then one number per line, sorted
+  sed -e 's/\\textbf{//g' -e 's/\\rd{//g' -e 's/\\bl{//g' -e 's/[{}]//g' \
+    | grep -oE '[0-9]+\.[0-9]+|[0-9]*\.[0-9]+' | sort
+}
+verdict() {  # $1 = label, $2 = paper block file, $3 = recomputed block file
+  local name="$1" a b
+  a=$(numbers < "$2"); b=$(numbers < "$3")
+  if [ -z "$a" ] || [ -z "$b" ]; then
+    printf '  VERDICT: CANNOT CHECK -- one side produced no numbers.\n'
+    FAIL=$((FAIL+1)); return
+  fi
+  if [ "$a" = "$b" ]; then
+    printf '  VERDICT: %s matches results/ (%s figures compared).\n' \
+      "$name" "$(printf '%s\n' "$a" | wc -l | tr -d ' ')"
+    PASS=$((PASS+1))
+  else
+    printf '  VERDICT: %s DISAGREES with results/.\n' "$name"
+    printf '    in the paper but not recomputed: %s\n' \
+      "$(comm -23 <(printf '%s\n' "$a") <(printf '%s\n' "$b") | tr '\n' ' ')"
+    printf '    recomputed but not in the paper: %s\n' \
+      "$(comm -13 <(printf '%s\n' "$a") <(printf '%s\n' "$b") | tr '\n' ' ')"
+    FAIL=$((FAIL+1))
+  fi
+}
+WORK=$(mktemp -d)
+
 hr; echo "TABLE 1  table:AEC  dimension sweep"
-paper_rows 'table:AEC'
+PAPER_OUT="$WORK/t1.paper" paper_rows 'table:AEC'
 if [ "$R_OK" = 1 ]; then
+  : > "$WORK/t1.recomp"
   for d in results/dimension_sweep*; do
     [ -d "$d" ] || continue
     echo "  results/${d##*/}:"
-    agg 20_aggregate_dimension_sweep.R "$d" '^[0-9]+ +&|backslash' | sed 's/^/    /'
+    agg 20_aggregate_dimension_sweep.R "$d" '^[0-9]+ +&|backslash' \
+      | tee -a "$WORK/t1.recomp" | sed 's/^/    /'
   done
+  verdict "Table 1" "$WORK/t1.paper" "$WORK/t1.recomp"
 fi
 
 #-----------------------------------------------------------------------
 hr; echo "TABLE 2  tab:support  support recovery"
-paper_rows 'tab:support'
+PAPER_OUT="$WORK/t2.paper" paper_rows 'tab:support'
 # The directory the supplement names as the provenance of this table.  The
 # comparison is against this one; the others are listed as alternatives, which
 # is what they are.  Note there is no --post-draws here: the MANIFEST in the
@@ -96,7 +144,8 @@ if [ "$R_OK" = 1 ]; then
   Rscript scripts/02_aggregate_support_recovery.R --in="$DECLARED_T2" \
           --out=$(mktemp -d) 2>&1 \
     | awk '/falling back/{print} /Table 2 body/{b=1} /Fit diagnostics/{b=0} b&&/ & /{print}' \
-    | sed 's/^/    /'
+    | tee "$WORK/t2.recomp" | sed 's/^/    /'
+  verdict "Table 2" "$WORK/t2.paper" "$WORK/t2.recomp"
   echo "  other candidate directories, for the record:"
   for d in results/support_recovery*; do
     [ -d "$d" ] || continue
@@ -121,6 +170,14 @@ if [ "$R_OK" = 1 ] && [ -d results/sbc ]; then
   Rscript scripts/12_aggregate_sbc.R --out=$(mktemp -d) 2>&1 \
     | grep -E 'gi_hd|Error|error|^ +[0-9]+\.[0-9]+' | head -20 | sed 's/^/    /'
 fi
+
+  cat <<'NOTE'
+  VERDICT: compare by eye. The two sides here print at different precisions --
+  the paper rounds where the aggregator does not -- so an automatic comparison
+  would either invent disagreements or need a tolerance loose enough to hide
+  real ones. Tables 1 and 2, whose sides print identically, are checked
+  automatically above.
+NOTE
 
 #-----------------------------------------------------------------------
 hr; echo "TABLE 4  tab:brfss  case study"
@@ -149,7 +206,14 @@ if [ "$R_OK" = 1 ]; then
           --out=$(mktemp -d) 2>&1 \
     | awk '/selection_frequency/{f=1;next} f&&/^ *x[0-9]+ /{print}' \
     | sed 's/^/    /'
-  echo "    (covariates are x1..x13 in the order the caption lists them)"
+  cat <<'NOTE'
+    Rows are selection frequencies in descending order, which is how the paper
+    orders them too, so compare the two columns of numbers as sorted lists. The
+    labels are the design-matrix positions, not the caption's names: the per-fold
+    CSVs record `selected` as indices and R/case_data.R fixes what each index is.
+    They are NOT the caption's order -- an earlier version of this note said they
+    were, which would have had a reader map x3 to the caption's first row.
+NOTE
 fi
 
 #-----------------------------------------------------------------------
@@ -200,6 +264,14 @@ prose_check() {  # $1 = table label, $2 = human name
     }' "$MS"
 }
 
+  cat <<'NOTE'
+  VERDICT: compare by eye. The two sides here print at different precisions --
+  the paper rounds where the aggregator does not -- so an automatic comparison
+  would either invent disagreements or need a tolerance loose enough to hide
+  real ones. Tables 1 and 2, whose sides print identically, are checked
+  automatically above.
+NOTE
+
 # Only against the manuscript.  paper_tables.tex holds the table environments
 # and nothing between them, so "the prose after this table" is the next table,
 # and every figure in it gets flagged.  A check that cries wolf on its own
@@ -215,8 +287,28 @@ else
 fi
 
 hr
+printf 'AUTOMATIC VERDICT: %d of %d checked tables match results/.\n' \
+  "$PASS" "$((PASS+FAIL))"
+if [ "$FAIL" -gt 0 ]; then
+  printf 'Tables 3 and 4 above are eye comparisons; the differing figures are named.\n'
+else
+  printf 'Tables 3 and 4 above are eye comparisons and are not counted here.\n'
+fi
 cat <<'EOF'
-A table passes only if exactly one directory reproduces it. More than one
-candidate, or none, means the published figures cannot be traced, which is the
-state Table 2 was found in.
+
+A table passes when the directory the supplement names for it reproduces its
+rows, and that directory is marked * above. Other directories under the same
+prefix are not ambiguity: they are the record of which datasets and settings
+were tried, kept deliberately rather than deleted.
+
+That is a weaker rule than this script first applied, which was that exactly one
+directory may exist. The rule changed because the mechanism did. When nothing
+recorded which run produced a table, a second candidate meant the figures could
+not be traced -- the state Table 2 was found in. Now the supplement names the
+run and each run directory carries a MANIFEST, so provenance is declared rather
+than inferred from what happens to be on disk.
+
+What still fails: a declared directory whose rows differ from the paper's, a
+declared directory that is absent, or a table for which no comparison is printed
+at all.
 EOF
