@@ -170,7 +170,9 @@ if [ "$FAILED" -eq 0 ]; then
   cat <<'EOF'
 Three different claims, and this run settled two of them.
 
-  1. The implementation is correct            -- steps 1 to 4, on this laptop.
+  1. The models compile, gamma is recovered where least squares cannot recover
+     it, predictions carry S_0, and the fast likelihood equals the
+     per-observation one                      -- steps 1 to 4, on this laptop.
   2. The tables match the numbers behind them -- step 5, on this laptop, from
      the per-task CSVs tracked in results/.
   3. Those numbers are what the model produces from scratch -- NOT checked
