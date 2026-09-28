@@ -73,7 +73,15 @@ set.seed(seed)
 
 sd_h <- 0.5
 sd_x_train <- 0.1
-sd_x_target <- 0.3          # target domain is the more dispersed one
+# Twice the training dispersion, not three times.  At 0.3 the target slope is
+# -0.64 and the target conditional scale 0.768, so over the range of X0 the
+# fitted relation moves Y by about as much as its own noise and the figure shows
+# a cloud.  At 0.2 the slope is -1.44 against a conditional scale of 0.625 and
+# the relation is visible.  It is not pushed further: at 0.1 the target
+# dispersion equals the training one, the target slope equals the training slope
+# of -2.45, and the figure would no longer show what it exists to show -- that K
+# transfers across domains and the slope does not.
+sd_x_target <- 0.2          # target domain is the more dispersed one
 sd_y <- 0.01
 gamma_true <- 1
 env_shift <- c(2, 3.5)      # two training environments
@@ -124,7 +132,13 @@ model <- load_bgi_model(file.path(root, "stan", "gi_hd.stan"),
                         cache_dir = file.path(root, "results", "compiled"))
 fit <- fit_bgi(x = x, y = y, z = z, x0 = x0, model = model,
                cov_method = "pooled", chains = 4, iter = 2000,
-               seed = seed, cores = 4, adapt_delta = adapt_delta)
+               seed = seed, cores = 4, adapt_delta = adapt_delta,
+               # adapt_delta 0.99 takes short steps, so the trees are deep and
+               # the default ceiling of 12 saturates: 1401 transitions hit it
+               # once the target dispersion came down.  Raising the ceiling is
+               # the response to that warning; raising adapt_delta without it
+               # is what causes it.
+               max_treedepth = 14)
 
 post <- function(v) c(mean = mean(v), lo = stats::quantile(v, 0.025, names = FALSE),
                       hi = stats::quantile(v, 0.975, names = FALSE))
