@@ -32,13 +32,14 @@ by four orders of magnitude:
 
 | Claim | Where it is checked | Cost |
 |---|---|---|
-| The implementation is correct | `run_checks.sh`, steps 1–4 | minutes, laptop |
+| The models compile, `gamma` is recovered where least squares cannot recover it, predictions carry `S_0`, and the fast likelihood equals the per-observation one | `run_checks.sh`, steps 1–4 | minutes, laptop |
 | No table was transcribed wrongly | `run_checks.sh` step 5, or `bash check_tables.sh` alone | seconds, laptop |
 | The numbers are what the model produces from scratch | one job array per table | hours, cluster |
 
 So a referee can confirm on a laptop that every figure in every table is the
 figure the recorded fits produce, and needs a cluster only to regenerate those
-fits. The numeric results are in the repository for exactly this reason; the
+fits. The first row is deliberately a list rather than "the implementation is
+correct": four tests establish four things, and correctness is not one of them. The numeric results are in the repository for exactly this reason; the
 section after next says which directory belongs to which table.
 
 ---

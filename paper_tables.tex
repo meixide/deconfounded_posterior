@@ -2,16 +2,17 @@
 % verbatim so that check_tables.sh has something to compare its recomputed rows
 % against without the manuscript source being in this repository.
 %
-% Regenerate from jcgs.tex with:
+% Generated from jcgs.tex at commit 71d1bc85af809f29421b8b65aee1201970a739f0 (2026-09-28).
+% A clone without the manuscript cannot verify that this is still current; it
+% can only report what it was made from, which is why the commit is stamped
+% here. Where the manuscript IS beside the package, check_tables.sh regenerates
+% the extract and diffs it, and says so.
 %
-%   awk '/\begin{table/{buf="";inb=1} inb{buf=buf $0 "\n"}
-%        /\end{table}/&&inb{if (buf ~ /label{(table:AEC|tab:support|tab:sbc|tab:brfss)}/)
-%        printf "%s\n", buf; inb=0}' jcgs.tex
+%   awk '/\\begin{table/{buf=\"\";inb=1} inb{buf=buf $0 \"\\n\"}
+%        /\\end{table}/&&inb{if (buf ~ /label{(table:AEC|tab:support|tab:sbc|tab:brfss)}/)
+%        printf \"%%s\", buf; inb=0}' jcgs.tex
 %
-% If a table here disagrees with the paper, this file is stale and the check is
-% comparing against the wrong thing. That is the one failure mode it has.
-%
-% \rd{...} and \bl{...} are the revision's change-tracking macros: they colour
+% \rd{...} and \bl{...} are the revision change-tracking macros: they colour
 % text and carry no content, so \rd{0.932} is the number 0.932.
 	\begin{table}[!htbp]
 		\centering

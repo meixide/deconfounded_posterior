@@ -32,7 +32,16 @@ cd "$(dirname "$0")"
 # block printed `awk: can t open file` and the check recomputed rows with
 # nothing to compare them against -- which looks like a pass.
 MS="../reviewed_manuscript/jcgs.tex"
-if [ ! -f "$MS" ]; then MS="paper_tables.tex"; fi
+if [ ! -f "$MS" ]; then
+  MS="paper_tables.tex"
+  # Say what cannot be established here. Without the manuscript there is nothing
+  # to diff the extract against, so every verdict below is measured against a
+  # file whose currency this clone cannot verify -- it can only report the
+  # commit the extract was made from, which is stamped in its header.
+  echo "NOTE: the manuscript is not in this checkout, so the extract's currency"
+  echo "      cannot be verified here. It was generated from:"
+  grep -m1 'Generated from jcgs.tex at commit' paper_tables.tex | sed 's/^%/       /'
+fi
 if [ ! -f "$MS" ]; then
   echo "Neither ../reviewed_manuscript/jcgs.tex nor paper_tables.tex found;" >&2
   echo "there is nothing to compare the recomputed rows against." >&2

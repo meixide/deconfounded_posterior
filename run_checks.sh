@@ -120,6 +120,16 @@ if Rscript scripts/19_sim_dimension_sweep.R --task=1 \
       cat(sprintf("      coverage, training scale       %.3f\n", r$cov_train_scale))
       cat(sprintf("      coverage, least squares        %.3f\n", r$cov_ols))
       cat(sprintf("      max Rhat                       %.3f\n", r$max_rhat))
+      # A bare "ok" beside a divergence warning invites the reader to decide for
+      # themselves whether it matters.  The package has a rule -- a replication
+      # is kept when its divergences are at most a hundredth of its post-warmup
+      # draws -- so apply it here and say which side of it this fit falls on.
+      draws <- 4 * 1000
+      frac <- r$divergences / draws
+      cat(sprintf("      divergences                    %d of %d draws (%.2f%%)\n",
+                  r$divergences, draws, 100 * frac))
+      cat(sprintf("      screening rule                 %s (kept below 1%%)\n",
+                  if (frac <= 0.01) "passes" else "WOULD BE EXCLUDED"))
     }' 2>/dev/null
 else
   note_fail "scripts/19_sim_dimension_sweep.R"
