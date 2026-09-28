@@ -363,18 +363,9 @@ echo
 cat "$SUMMARY"
 echo
 cat <<'EOF'
-The precision is the finest at which every figure in that table agrees. It
-differs between tables because the paper rounds to what it reports and the
-aggregators do not: agreeing to 2 decimals means the printed figures are right,
-not that the table is approximately right.
-
-Where a count appears instead, that many figures agree at 2 decimals and the
-rest are named above. One such difference is expected and is not an error:
-Table 4's strength-guideline frequency is exactly 0.625, which the paper rounds
-up to 0.63 and printf rounds down to 0.62. A tie is the only difference that
-should ever appear there; anything else is a table that has drifted from the
-numbers behind it.
-
+Precision is the finest at which every figure in that table agrees; it differs
+because the paper rounds and the aggregators do not. Table 4's one gap of 0.005
+is the exactly-0.625 frequency, printed as 0.63 and rounded by printf to 0.62.
 EOF
 if [ "$BAD" -gt 0 ]; then
   printf '\nRESULT: %d table(s) did not check out. Exiting non-zero.\n' "$BAD"
@@ -382,23 +373,5 @@ else
   printf '\nRESULT: every table checks out against results/.\n'
 fi
 
-cat <<'EOF'
-
-A table passes when the directory the supplement names for it reproduces its
-rows, and that directory is marked * above. Other directories under the same
-prefix are not ambiguity: they are the record of which datasets and settings
-were tried, kept deliberately rather than deleted.
-
-That is a weaker rule than this script first applied, which was that exactly one
-directory may exist. The rule changed because the mechanism did. When nothing
-recorded which run produced a table, a second candidate meant the figures could
-not be traced -- the state Table 2 was found in. Now the supplement names the
-run and each run directory carries a MANIFEST, so provenance is declared rather
-than inferred from what happens to be on disk.
-
-What still fails: a declared directory whose rows differ from the paper's, a
-declared directory that is absent, or a table for which no comparison is printed
-at all.
-EOF
 
 exit $((BAD > 0))
