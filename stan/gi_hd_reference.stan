@@ -49,6 +49,16 @@ data {
   real<lower=0> b_tau;
   real<lower=0, upper=1> ncp;           // degree of non-centring; see gi_hd.stan
 
+  // The prior on the free part of the conditional variance, mirroring
+  // gi_hd.stan.  This model exists to validate that model's likelihood, which
+  // it can only do if the two differ by a constant; carrying a different prior
+  // makes the difference vary with v_raw instead, and the identity test then
+  // fails for a reason that has nothing to do with the likelihood.  That is
+  // what happened when the package default changed from Jeffreys to a proper
+  // inverse-gamma and this file was left behind.
+  real<lower=0> v_prior_shape;          // 0 selects the Jeffreys prior
+  real<lower=0> v_prior_rate;
+
   int<lower=0> N0;
   matrix[N0, P] X0;
   vector[P] mu0;
@@ -91,7 +101,11 @@ transformed parameters {
 }
 
 model {
-  target += -log(v_raw);
+  if (v_prior_shape > 0) {
+    v_raw ~ inv_gamma(v_prior_shape, v_prior_rate);
+  } else {
+    target += -log(v_raw);
+  }
   tau2_num ~ gamma(a_tau, 1);
   tau2_den ~ gamma(b_tau, 1);
   {

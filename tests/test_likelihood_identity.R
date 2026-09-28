@@ -83,6 +83,14 @@ sd_ref <- list(
   sd_mu_scale = sd_fast$sd_mu_scale,
   a_tau = sd_fast$a_tau, b_tau = sd_fast$b_tau,
   ncp = sd_fast$ncp,
+  # Taken from the fast model's data rather than hard-coded, so that the two
+  # models cannot drift apart when a default changes.  They did: the package
+  # default moved from the Jeffreys prior to a proper inverse-gamma, the
+  # reference model kept Jeffreys, and this test failed with a difference that
+  # varied with v_raw -- a real failure, but of the priors, not the likelihood
+  # it exists to check.
+  v_prior_shape = sd_fast$v_prior_shape,
+  v_prior_rate = sd_fast$v_prior_rate,
   N0 = sd_fast$N0, X0 = x0s, mu0 = sd_fast$mu0
 )
 
