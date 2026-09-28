@@ -1,0 +1,28 @@
+# Settings of this run, so that the directory describes itself.
+#
+# Table 4 of the manuscript and the case study of Section 3.2. The settings
+# below are those slurm/06_case_study.sh applies to the dataset key
+# brfss_diab, plus the iteration count the directory name carries.
+dataset=brfss
+subset=diabetic
+model=gi_hd_slope
+chains=4
+iter=4000
+post_draws=8000
+ncp=0
+adapt_delta=0.99
+min_n0=300
+max_target=2000
+#
+# The prior on the free part of the conditional variance. This run predates the
+# change of default and used the improper Jeffreys p(v) propto 1/v, under which
+# the posterior is not integrable wherever the target Mahalanobis term can
+# exceed every training one. It is inferred, not recorded per fold: no SLURM
+# script passes --v-prior-shape and the default in scripts/05_case_study.R at
+# the time was 0. The default is now inv_gamma(3, 2).
+#
+# Supplement C reports the Puerto Rico fold, where the target term attains the
+# maximum, at a predictive coverage of 0.249. That is the fold in which the
+# condition above is not a remote region of the parameter space.
+v_prior_shape=0
+v_prior_rate=0
