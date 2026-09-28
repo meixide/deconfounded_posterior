@@ -41,27 +41,27 @@
 	\hline
 	\multicolumn{7}{c}{\emph{support recovery}: true positive rate / false discovery proportion}\\
 	\hline
-	\textbf{ours}, sign rule & 1.00 / .05 & 0.93 / .14 & 0.97 / .00 & 0.63 / .07 & .20 & \textbf{.82}\\
-	\textbf{ours}, credible interval & 1.00 / .03 & 0.93 / .11 & 0.87 / .00 & 0.52 / .06 & .14 & \textbf{.80}\\
-	\textbf{ours}, ROPE & 1.00 / .00 & 0.89 / .00 & 0.83 / .00 & 0.56 / .09 & .06 & \textbf{.82}\\
-	frequentist GI & 1.00 / .00 & 0.81 / .12 & 0.40 / .07 & 0.30 / .20 & .22 & .56\\
-	OLS & 1.00 / .00 & 1.00 / .48 & 1.00 / .05 & 0.96 / .49 & .55 & .52\\
-	OLS, Benjamini--Hochberg & 1.00 / .03 & 1.00 / .49 & 1.00 / .05 & 0.96 / .49 & .58 & .50\\
-	anchor regression & 1.00 / .21 & 0.96 / .43 & 1.00 / .10 & 1.00 / .48 & .76 & .49\\
-	group DRO & 1.00 / .16 & 0.93 / .50 & 1.00 / .14 & 1.00 / .48 & .78 & .45\\
-	instrumental variables & 1.00 / .00 & 0.63 / .00 & 0.07 / .00 & 0.00 / .00 & .00 & .44\\
-	invariant causal prediction & 1.00 / .00 & 0.11 / .00 & 0.30 / .00 & 0.07 / .00 & .00 & .38\\
+	\textbf{ours}, sign rule & 1.00 / .06 & 0.96 / .10 & 0.93 / .00 & 0.56 / .09 & .19 & \textbf{.81}\\
+	\textbf{ours}, credible interval & 1.00 / .05 & 0.96 / .07 & 0.83 / .00 & 0.52 / .06 & .13 & \textbf{.80}\\
+	\textbf{ours}, ROPE & 1.00 / .00 & 0.93 / .00 & 0.83 / .00 & 0.52 / .06 & .03 & \textbf{.83}\\
+	frequentist GI & 1.00 / .00 & 0.85 / .08 & 0.40 / .07 & 0.22 / .17 & .16 & .57\\
+	OLS & 1.00 / .03 & 1.00 / .47 & 1.00 / .05 & 0.96 / .49 & .58 & .53\\
+	OLS, Benjamini--Hochberg & 1.00 / .05 & 1.00 / .49 & 1.00 / .05 & 1.00 / .48 & .60 & .51\\
+	anchor regression & 1.00 / .24 & 0.96 / .44 & 1.00 / .10 & 1.00 / .48 & .78 & .46\\
+	group DRO & 1.00 / .17 & 0.93 / .49 & 1.00 / .14 & 0.96 / .50 & .80 & .43\\
+	instrumental variables & 1.00 / .00 & 0.74 / .00 & 0.07 / .00 & 0.00 / .00 & .00 & .46\\
+	invariant causal prediction & 1.00 / .00 & 0.15 / .00 & 0.30 / .00 & 0.11 / .00 & .00 & .41\\
 	\specialrule{1pt}{0pt}{0pt}
 	\multicolumn{7}{c}{\emph{prediction}: coverage / interval score, nominal $95\%$}\\
 	\hline
-	\textbf{ours} & .96 / 4.9 & .94 / \textbf{10.0} & .98 / 5.7 & .92 / \textbf{13.2} & --- & ---\\
-	frequentist GI & .92 / 5.5 & .75 / 47.4 & .67 / 37.0 & .27 / 479.4 & --- & ---\\
-	OLS & .96 / 4.6 & .82 / 16.3 & .95 / 4.7 & .81 / 18.9 & --- & ---\\
-	anchor regression & .96 / 4.6 & .88 / 13.9 & .95 / 4.7 & .78 / 22.4 & --- & ---\\
-	group DRO & .96 / 4.6 & .86 / 13.5 & .95 / 4.7 & .78 / 21.9 & --- & ---\\
-	V-REx & .96 / 4.6 & .86 / 14.0 & .95 / 4.7 & .78 / 22.7 & --- & ---\\
-	Wasserstein DRO & .95 / 4.6 & .83 / 15.1 & .95 / 4.9 & .84 / 16.9 & --- & ---\\
-	instrumental variables & .92 / 6.0 & .94 / 58.4 & .85 / 22.0 & .83 / 166.8 & --- & ---\\
+	\textbf{ours} & .96 / 4.9 & .93 / \textbf{9.6} & .98 / 5.7 & .93 / \textbf{13.0} & --- & ---\\
+	frequentist GI & .92 / 5.4 & .77 / 45.3 & .67 / 37.0 & .32 / 472.4 & --- & ---\\
+	OLS & .96 / 4.6 & .84 / 14.3 & .95 / 4.7 & .82 / 17.4 & --- & ---\\
+	anchor regression & .95 / 4.6 & .90 / 11.9 & .95 / 4.7 & .82 / 17.3 & --- & ---\\
+	group DRO & .95 / 4.7 & .88 / 11.7 & .95 / 4.7 & .82 / 18.0 & --- & ---\\
+	V-REx & .95 / 4.6 & .87 / 11.9 & .95 / 4.7 & .82 / 17.7 & --- & ---\\
+	Wasserstein DRO & .95 / 4.7 & .83 / 14.1 & .95 / 4.9 & .86 / 15.7 & --- & ---\\
+	instrumental variables & .92 / 5.9 & .94 / 56.3 & .85 / 22.0 & .83 / 163.2 & --- & ---\\
 	\specialrule{1pt}{0pt}{0pt}
 	\end{tabular}
 	\caption{\bl{Support recovery and predictive intervals in the four scenarios, ten replications each, in the slope parameterisation of Section \ref{sec:slope}; conf.: confounding. Last two columns do not apply to prediction panel. Our three rules read three decisions off one posterior, and OLS with and without Benjamini--Hochberg share a fit, so each group has one row in the prediction panel. Bold marks the smallest interval score in each confounded column and the largest Matthews correlations, which our three rules share to within Monte Carlo error. \rd{In the support-recovery panel the entry to the left of each slash should be large and the one to the right small.}}}

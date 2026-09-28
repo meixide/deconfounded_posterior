@@ -209,7 +209,7 @@ PAPER_OUT="$WORK/t2.paper" paper_rows 'tab:support'
 # directory carries the draw count, so the screen cannot silently revert to
 # demanding zero divergences, as it did when this number lived on the command
 # line and this script did not pass it.
-DECLARED_T2=results/support_recovery_ad99_slope
+DECLARED_T2=results/support_recovery_properprior
 if [ "$R_OK" = 1 ]; then
   if [ -f "$DECLARED_T2/MANIFEST" ]; then
     printf '  settings recorded in %s/MANIFEST: %s\n' "${DECLARED_T2#results/}" \
