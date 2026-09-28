@@ -1,0 +1,19 @@
+# Settings of this run, so that the directory describes itself.
+#
+# post_draws is 4 chains x 2000 iterations with warmup at half, as
+# slurm/01_support_recovery.sh sets them (--chains from cpus-per-task=4)
+# and scripts/01_sim_support_recovery.R defaults them.  It is inferred from
+# those two files, not recorded per replication: this run predates the
+# bgi_post_draws column.  Runs after it carry the count in every row and do
+# not need this file.
+#
+# The aggregator screens on divergences per draw, so without this number it
+# falls back to demanding zero divergences, which is not the screen the
+# published table used.
+post_draws=4000
+chains=4
+iter=2000
+model=unrecorded
+adapt_delta=unrecorded
+ncp=unrecorded
+n_task_files=40

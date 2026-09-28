@@ -1,0 +1,2 @@
+"task","dataset","model","E","n_sub","sd_b_scale","N_train","p","rhat_gamma","ess_gamma","rhat_b_bar","ess_b_bar","rhat_sd_b","ess_sd_b","rhat_sigma_y","ess_sigma_y","rhat_S0","ess_S0","max_rhat","min_ess","divergent","coverage","runtime_sec"
+2,"brfss","gi_hd_slope",26,300,1,7800,13,1.02457822735464,252.999992576272,1.02444098136544,253.506164577213,1.02784274279319,343.886781223297,1.00215316631227,600.820737031682,1.01358767421726,309.529490290982,1.02599583321911,247.497470371764,1,0.938,657.357790708542

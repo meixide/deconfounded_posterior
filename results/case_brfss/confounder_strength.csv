@@ -1,0 +1,23 @@
+"target","r_squared"
+"BMI ~ sex",0.000120118434657685
+"BMI ~ age",2.12878223393904e-05
+"BMI ~ income",0.00764053566668837
+"BMI ~ education",0.00990612348085966
+"BMI ~ diabetes",0.0477282082344054
+"BMI ~ race",0.0130506268836203
+"BMI ~ genhlth",0.0626433084130949
+"BMI ~ all confounders",0.105858051388976
+"BMI ~ covariates",0.0473743093610382
+"covariate: smokingsmoker_daily",0.0566751162085317
+"covariate: smokingsmoker_occasional",0.0164542534790501
+"covariate: smokingformer",0.0577407729728968
+"covariate: alcoholle1",0.0124843966072564
+"covariate: alcohol1to3",0.0215490690783897
+"covariate: alcohol3to7",0.0301739309142488
+"covariate: alcohol7to14",0.0231698266047583
+"covariate: alcoholgt14",0.0199997830028728
+"covariate: phys_activity",0.127198957627508
+"covariate: strengthmeets",0.0436296096179866
+"covariate: ecigyes",0.0657124499421142
+"covariate: smokelessdaily",0.0207270282444848
+"covariate: smokelesssome_days",0.0102665745182486

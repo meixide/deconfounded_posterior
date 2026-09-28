@@ -1,0 +1,14 @@
+"covariate","selection_frequency"
+"smokingformer",1
+"alcoholle1",1
+"alcohol3to7",1
+"alcoholgt14",1
+"strengthmeets",1
+"smokelessdaily",1
+"smokingsmoker_daily",0.980769230769231
+"smokingsmoker_occasional",0.980769230769231
+"alcohol1to3",0.980769230769231
+"smokelesssome_days",0.980769230769231
+"phys_activity",0.942307692307692
+"ecigyes",0.942307692307692
+"alcohol7to14",0.596153846153846

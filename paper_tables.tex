@@ -1,0 +1,105 @@
+% paper_tables.tex -- the four table environments of the manuscript, extracted
+% verbatim so that check_tables.sh has something to compare its recomputed rows
+% against without the manuscript source being in this repository.
+%
+% Regenerate from jcgs.tex with:
+%
+%   awk '/\begin{table/{buf="";inb=1} inb{buf=buf $0 "\n"}
+%        /\end{table}/&&inb{if (buf ~ /label{(table:AEC|tab:support|tab:sbc|tab:brfss)}/)
+%        printf "%s\n", buf; inb=0}' jcgs.tex
+%
+% If a table here disagrees with the paper, this file is stale and the check is
+% comparing against the wrong thing. That is the one failure mode it has.
+	\begin{table}[!htbp]
+		\centering
+		\begin{tabular}{l|ccc}
+			\hline
+		$n\,\backslash\,p$ & 2 & 5 & 10 \\ \hline
+		200   & .93/.94   & .91/.94   & .93/.93 \\
+		500   & .91/.95   & .90/.94   & .90/.92 \\
+		1000  & .93/.95   & .93/.95   & .91/.94 \\
+		2000  & .92/.95   & .90/.95   & .92/.95 \\ 
+		
+			\hline
+		\end{tabular}
+		\caption{\bl{Dimension sweep: average empirical coverage of nominal $95\%$ prediction intervals for held-out test-domain responses, reported as ordinary least squares /
+			our predictive posterior, over $24$ replications per cell less those
+			failing sampler diagnostics (Supplement B).}}
+		\label{table:AEC}
+	\end{table}
+
+	\begin{table}[!htbp]
+	\centering
+	\small
+	\begin{tabular}{lcccc|cc}
+	\hline
+	& \multicolumn{2}{c}{strong identifiability} & \multicolumn{2}{c}{weak identifiability} & \multicolumn{2}{c}{all four}\\
+	method & no conf. & \textbf{conf.} & no conf. & \textbf{conf.} & FWER & MCC\\
+	\hline
+	\multicolumn{7}{c}{\emph{support recovery}: true positive rate / false discovery proportion}\\
+	\hline
+	\textbf{ours}, sign rule & 1.00 / .05 & 0.93 / .14 & 0.97 / .00 & 0.63 / .07 & .20 & \textbf{.82}\\
+	\textbf{ours}, credible interval & 1.00 / .03 & 0.93 / .11 & 0.87 / .00 & 0.52 / .06 & .14 & \textbf{.80}\\
+	\textbf{ours}, ROPE & 1.00 / .00 & 0.89 / .00 & 0.83 / .00 & 0.56 / .09 & .06 & \textbf{.82}\\
+	frequentist GI & 1.00 / .00 & 0.81 / .12 & 0.40 / .07 & 0.30 / .20 & .22 & .56\\
+	OLS & 1.00 / .00 & 1.00 / .48 & 1.00 / .05 & 0.96 / .49 & .55 & .52\\
+	OLS, Benjamini--Hochberg & 1.00 / .03 & 1.00 / .49 & 1.00 / .05 & 0.96 / .49 & .58 & .50\\
+	anchor regression & 1.00 / .21 & 0.96 / .43 & 1.00 / .10 & 1.00 / .48 & .76 & .49\\
+	group DRO & 1.00 / .16 & 0.93 / .50 & 1.00 / .14 & 1.00 / .48 & .78 & .45\\
+	instrumental variables & 1.00 / .00 & 0.63 / .00 & 0.07 / .00 & 0.00 / .00 & .00 & .44\\
+	invariant causal prediction & 1.00 / .00 & 0.11 / .00 & 0.30 / .00 & 0.07 / .00 & .00 & .38\\
+	\specialrule{1pt}{0pt}{0pt}
+	\multicolumn{7}{c}{\emph{prediction}: coverage / interval score, nominal $95\%$}\\
+	\hline
+	\textbf{ours} & .96 / 4.9 & .94 / \textbf{10.0} & .98 / 5.7 & .92 / \textbf{13.2} & --- & ---\\
+	frequentist GI & .92 / 5.5 & .75 / 47.4 & .67 / 37.0 & .27 / 479.4 & --- & ---\\
+	OLS & .96 / 4.6 & .82 / 16.3 & .95 / 4.7 & .81 / 18.9 & --- & ---\\
+	anchor regression & .96 / 4.6 & .88 / 13.9 & .95 / 4.7 & .78 / 22.4 & --- & ---\\
+	group DRO & .96 / 4.6 & .86 / 13.5 & .95 / 4.7 & .78 / 21.9 & --- & ---\\
+	V-REx & .96 / 4.6 & .86 / 14.0 & .95 / 4.7 & .78 / 22.7 & --- & ---\\
+	Wasserstein DRO & .95 / 4.6 & .83 / 15.1 & .95 / 4.9 & .84 / 16.9 & --- & ---\\
+	instrumental variables & .92 / 6.0 & .94 / 58.4 & .85 / 22.0 & .83 / 166.8 & --- & ---\\
+	\specialrule{1pt}{0pt}{0pt}
+	\end{tabular}
+	\caption{\bl{Support recovery and predictive intervals in the four scenarios, ten replications each, in the slope parameterisation of Section \ref{sec:slope}; conf.: confounding. Last two columns do not apply to prediction panel. Our three rules read three decisions off one posterior, and OLS with and without Benjamini--Hochberg share a fit, so each group has one row in the prediction panel. Bold marks the smallest interval score in each confounded column and the largest Matthews correlations, which our three rules share to within Monte Carlo error. \rd{In the support-recovery panel the entry to the left of each slash should be large and the one to the right small.}}}
+	\label{tab:support}
+	\end{table}
+
+	\begin{table}[!htbp]
+	\centering
+	\begin{tabular}{llcccc}
+	\hline
+	 & & \multicolumn{2}{c}{equal $\Sigma_e$} & \multicolumn{2}{c}{dispersed $\Sigma_e$}\\
+	parameterisation & arm & coverage & extreme ratio & coverage & extreme ratio\\
+	\hline
+	$K$-parameterisation & oracle  & 0.954 & 1.02 & \rd{0.932} & 1.02\\
+	$K$-parameterisation & plug-in & 0.778 & 2.76 & 0.707 & 3.74\\
+	$b$-parameterisation & oracle  & 0.955 & 0.93 & 0.951 & 1.00\\
+	$b$-parameterisation & plug-in & 0.926 & 1.31 & 0.915 & 1.54\\
+	\hline
+	\end{tabular}
+	\caption{\bl{Simulation-based calibration of both parameterisations, $100$
+	replications per cell at $p=4$, $E=8$, $n_e=200$. ``coverage'' is the proportion of replications whose $95\%$ marginal credible interval for a $\gamma^j$ contains the value drawn from the prior, which a correctly computed posterior makes $0.95$ exactly, in finite samples. ``extreme ratio'' is the mass in the two outermost of $20$ rank bins over the mass expected under uniformity, so $1$ is correct and more than $1$ means the posterior is too narrow. Supplement C (Table S2) counts the usable replications.}}
+	\label{tab:sbc}
+	\end{table}
+
+	\begin{table}[!htbp]
+	\centering
+	\small
+	\caption{\bl{Fraction of $48$ held-out states in which each covariate is declared causal by the sign rule of Section \ref{sec:sel} at $\alpha=0.05$.}}
+	\label{tab:brfss}
+	\begin{tabular}{lc@{\qquad}lc}
+	\hline
+	covariate & freq. & covariate & freq.\\
+	\hline
+	former smoker            & 1.00 & alcohol 1--3 drinks/wk   & 0.71\\
+	alcohol $\le 1$ drink/wk & 1.00 & alcohol $>14$ drinks/wk  & 0.65\\
+	smokeless tobacco, daily & 1.00 & meets strength guideline & 0.63\\
+	current daily smoker     & 0.98 & alcohol 3--7 drinks/wk   & 0.02\\
+	current occasional smoker& 0.81 & alcohol 7--14 drinks/wk  & 0.00\\
+	aerobic activity score   & 0.79 & current e-cigarette use  & 0.00\\
+	                         &      & smokeless, some days     & 0.00\\
+	\hline
+	\end{tabular}
+	\end{table}
+

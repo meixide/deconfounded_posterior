@@ -1,0 +1,2 @@
+"model","hetero","arm","p","n_env","n_e","usable_reps","coverage_95","uniformity_p","extreme_rank_ratio","dropped_rhat","dropped_ess"
+"gi_hd_slope",0.5,"plugin",4,8,200,94,0.914893617021277,0.0729269696910928,1.53590425531915,5,1

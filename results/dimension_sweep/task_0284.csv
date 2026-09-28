@@ -1,0 +1,2 @@
+"task_id","cell_id","label","rep_id","p","n_e","n_env","n0","cov_ours","score_ours","width_ours","rmse_ours","cov_s0_scale","cov_train_scale","score_s0_scale","score_train_scale","cov_ols","score_ols","width_ols","divergences","max_rhat","min_ess_bulk","adapt_delta","ncp","bgi_seconds"
+284,12,"p10_n2000",20,10,2000,11,2000,0.93,6.08704789512544,4.72446730885524,1.28537052330086,0.9275,0.912,6.11673556491806,6.25050947187181,0.912,6.30445886336566,4.57536827397384,0,1.00346898221979,682.245959680888,0.99,0,596.267122983932

@@ -1,0 +1,2 @@
+"task_id","rep_id","n_e","N","p","n_env","confounding","lambda_min_S","c_in","sigma_y","r_N_M1","tail_mass_M1","tail_mass_M2","tail_mass_M3","radius_q95","M_star","radius_q50","post_mean_err","mass_U","divergent","max_rhat","min_ess","seconds"
+35,5,50,400,4,8,1,0.0452362602392509,0.00241387646788505,3.0610528551533,0.122387341534041,1,1,1,10.7127990830672,87.5319207753812,5.44179040802347,5.7419371727506,0,0,1.00552513263392,624.190976816746,18.1687939167023
