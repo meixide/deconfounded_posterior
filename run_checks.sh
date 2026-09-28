@@ -131,6 +131,9 @@ echo "    Recomputes each table from the committed per-task CSVs and prints the"
 echo "    rows beside the ones the manuscript has, so they can be compared."
 echo "    This needs no cluster and no Stan: the aggregators only read CSVs."
 if [ -d results/support_recovery_ad99_slope ] || [ -d results/dimension_sweep ]; then
+  # check_tables.sh now exits non-zero when a table does not check out, so this
+  # step can fail like the others.  It could not before, and the README promised
+  # that any failing step exits non-zero, which made that promise false.
   CT_LOG=check_tables_output.txt
   if bash check_tables.sh > "$CT_LOG" 2>&1; then
     BAD=$(grep -c 'label not found\|no loeo_folds\|falling back' "$CT_LOG" || true)
@@ -141,7 +144,8 @@ if [ -d results/support_recovery_ad99_slope ] || [ -d results/dimension_sweep ];
     fi
     echo "    Full side-by-side output: $CT_LOG"
   else
-    note_fail "check_tables.sh"
+    grep -E 'VERDICT|RESULT:' "$CT_LOG" | sed 's/^/    /'
+    note_fail "check_tables.sh (see $CT_LOG)"
   fi
 else
   echo "    Skipped: results/ holds no per-task CSVs in this checkout."

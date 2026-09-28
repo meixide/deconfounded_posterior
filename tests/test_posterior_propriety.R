@@ -27,8 +27,19 @@
 ## in the first block below is the impropriety, not a numerical artefact.
 ##
 ## A proper inverse-gamma prior on v_raw, which fit_bgi() exposes as
-## v_prior_shape and v_prior_rate, removes the problem; the default of zero
-## selects Jeffreys.
+## v_prior_shape and v_prior_rate, removes the problem.
+##
+## The two directions are not symmetric, and the output must not be read as
+## though they were.  A log density that stays flat along a ray to the boundary
+## establishes non-integrability: that one direction is enough to make the
+## integral infinite, so the first block below PROVES the posterior improper.  A
+## log density that falls along the same ray establishes nothing of the kind
+## about the whole parameter space; the third block is consistent with propriety
+## and does not demonstrate it.  What supports the inverse-gamma is the analytic
+## fact that it vanishes at the origin like v^{-(shape+1)} exp(-rate/v), which no
+## bounded likelihood can offset, whatever the anchoring does.  The third block
+## checks that the code does what that argument says, not that the argument is
+## true.
 ##
 ## Usage:  Rscript tests/test_posterior_propriety.R
 

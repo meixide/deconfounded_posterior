@@ -39,6 +39,23 @@ if [ ! -f "$MS" ]; then
   exit 2
 fi
 echo "Comparing against: $MS"
+# Is the shipped extract still the paper's?  Nothing else checks it, so a stale
+# paper_tables.tex would have every table agreeing with a manuscript that no
+# longer says that.  When the manuscript is beside this package, regenerate the
+# extract into a temporary file and diff.
+if [ -f "../reviewed_manuscript/jcgs.tex" ] && [ -f paper_tables.tex ]; then
+  FRESH=$(mktemp)
+  awk '/\\begin\{table/{buf="";inb=1} inb{buf=buf $0 "\n"}
+       /\\end\{table\}/&&inb{
+         if (buf ~ /label\{(table:AEC|tab:support|tab:sbc|tab:brfss)\}/) printf "%s", buf
+         inb=0}' ../reviewed_manuscript/jcgs.tex > "$FRESH"
+  if grep -v '^%' paper_tables.tex | diff -q - "$FRESH" >/dev/null 2>&1; then
+    echo "paper_tables.tex is current with the manuscript."
+  else
+    echo "WARNING: paper_tables.tex differs from the manuscript's tables."
+    echo "  It is stale; regenerate it before trusting any verdict below."
+  fi
+fi
 R_OK=1
 command -v Rscript >/dev/null 2>&1 || R_OK=0
 [ "$R_OK" = 0 ] && echo "Rscript not found: only the manuscript side will be shown." && echo
@@ -100,6 +117,9 @@ agg() {  # $1 = script, $2 = in dir, $3 = grep filter
 # swap places with another inside the same table and go unnoticed; nothing else
 # does, and any changed, missing or extra figure is named below.
 SUMMARY=$(mktemp); TMPA=$(mktemp); TMPB=$(mktemp)
+# Whether anything failed.  Printing DISAGREES and then exiting 0 is the shape
+# of a check that cannot fail, which is the shape this script had.
+BAD=0
 numbers() {
   sed -e 's/\\textbf{//g' -e 's/\\rd{//g' -e 's/\\bl{//g' -e 's/[{}]//g' \
     | grep -oE '[0-9]+\.[0-9]+|[0-9]*\.[0-9]+'
@@ -113,7 +133,7 @@ verdict() {  # $1 = name, $2 = paper block, $3 = recomputed block
   if [ "$na" -eq 0 ] || [ "$nb" -eq 0 ]; then
     printf '  %-9s %4s figures   NOT CHECKED: one side produced none\n' "$name" "-" >> "$SUMMARY"
     printf '  VERDICT: %s NOT CHECKED -- one side produced no figures.\n' "$name"
-    return
+    BAD=$((BAD+1)); return
   fi
   for d in 4 3 2 1; do
     awk -v d="$d" '{printf "%.*f\n", d, $1}' "$pf" | sort > "$TMPA"
@@ -126,21 +146,34 @@ verdict() {  # $1 = name, $2 = paper block, $3 = recomputed block
       return
     fi
   done
-  # Not every figure agrees at any single precision.  Report how many do at two
-  # decimals and name the rest, rather than calling the table wrong: a value of
-  # exactly 0.625 is a tie that the paper rounds up and printf rounds down, and
-  # an all-or-nothing verdict turns that into a failure it is not.
-  awk '{printf "%.2f\n", $1}' "$pf" | sort > "$TMPA"
-  awk '{printf "%.2f\n", $1}' "$rf" | sort > "$TMPB"
-  local same only_p only_r
-  same=$(comm -12 "$TMPA" "$TMPB" | grep -c . || echo 0)
-  only_p=$(comm -23 "$TMPA" "$TMPB" | tr '\n' ' ')
-  only_r=$(comm -13 "$TMPA" "$TMPB" | tr '\n' ' ')
-  printf '  %-9s %4d figures   %d agree to 2 decimals, %d differ\n' \
-    "$name" "$na" "$same" "$((na-same))" >> "$SUMMARY"
-  printf '  VERDICT: %s -- %d of %d figures agree to 2 decimals.\n' "$name" "$same" "$na"
-  printf '    in the paper, not recomputed: %s\n' "$only_p"
-  printf '    recomputed, not in the paper: %s\n' "$only_r"
+  # No single precision fits every figure. Pair the two sides by sorted value
+  # and look at the gaps: a gap no larger than half a unit in the paper's last
+  # printed decimal is the paper rounding, not the table drifting. Table 4's
+  # strength-guideline frequency is exactly 0.625, printed as 0.63 and rounded
+  # by printf to 0.62, and an all-or-nothing rule called that a failure.
+  sort -g "$pf" > "$TMPA"; sort -g "$rf" > "$TMPB"
+  local worst n_off
+  worst=$(paste "$TMPA" "$TMPB" | awk '
+    { d = $1 - $2; if (d < 0) d = -d; if (d > m) m = d }
+    END { printf "%.6f", m }')
+  n_off=$(paste "$TMPA" "$TMPB" | awk '{ d=$1-$2; if (d<0) d=-d; if (d > 0.0051) c++ }
+                                       END { print c+0 }')
+  if [ "$n_off" -eq 0 ]; then
+    printf '  %-9s %4d figures   agree to the printed precision (largest gap %s)\n' \
+      "$name" "$na" "$worst" >> "$SUMMARY"
+    printf '  VERDICT: %s agrees to the precision the paper prints; largest gap %s,\n' \
+      "$name" "$worst"
+    printf '           which is rounding in the last printed digit.\n'
+  else
+    printf '  %-9s %4d figures   %d differ by more than rounding\n' \
+      "$name" "$na" "$n_off" >> "$SUMMARY"
+    printf '  VERDICT: %s DISAGREES: %d figure(s) differ by more than half a unit\n' \
+      "$name" "$n_off"
+    printf '           in the last printed decimal; largest gap %s.\n' "$worst"
+    paste "$TMPA" "$TMPB" | awk '{ d=$1-$2; if (d<0) d=-d;
+      if (d > 0.0051) printf "    paper %s vs recomputed %s\n", $1, $2 }'
+    BAD=$((BAD+1))
+  fi
 }
 
 WORK=$(mktemp -d)
@@ -169,6 +202,14 @@ PAPER_OUT="$WORK/t2.paper" paper_rows 'tab:support'
 # line and this script did not pass it.
 DECLARED_T2=results/support_recovery_ad99_slope
 if [ "$R_OK" = 1 ]; then
+  if [ -f "$DECLARED_T2/MANIFEST" ]; then
+    printf '  settings recorded in %s/MANIFEST: %s\n' "${DECLARED_T2#results/}" \
+      "$(grep -E '^(post_draws|v_prior_shape|v_prior_rate|adapt_delta|model)=' \
+         "$DECLARED_T2/MANIFEST" | tr '\n' ' ')"
+  else
+    echo "  NO MANIFEST in $DECLARED_T2: the screen falls back to zero divergences."
+    BAD=$((BAD+1))
+  fi
   echo "  recomputed from ${DECLARED_T2#results/} (the run the supplement names):"
   Rscript scripts/02_aggregate_support_recovery.R --in="$DECLARED_T2" \
           --out=$(mktemp -d) 2>&1 \
@@ -326,6 +367,12 @@ should ever appear there; anything else is a table that has drifted from the
 numbers behind it.
 
 EOF
+if [ "$BAD" -gt 0 ]; then
+  printf '\nRESULT: %d table(s) did not check out. Exiting non-zero.\n' "$BAD"
+else
+  printf '\nRESULT: every table checks out against results/.\n'
+fi
+
 cat <<'EOF'
 
 A table passes when the directory the supplement names for it reproduces its
@@ -344,3 +391,5 @@ What still fails: a declared directory whose rows differ from the paper's, a
 declared directory that is absent, or a table for which no comparison is printed
 at all.
 EOF
+
+exit $((BAD > 0))

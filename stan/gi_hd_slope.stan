@@ -30,8 +30,13 @@
  * ---- The assumption this trades ------------------------------------------
  *
  * This is not a free reparameterisation and should not be presented as one.
- * A single common `b` would assume the Sigma_e are equal, which in general
- * they are not.  Instead the b_e are given a hierarchical prior,
+ * A single common `b` does not by itself require the Sigma_e to be equal --
+ * a common slope is perfectly compatible with different covariances, and an
+ * earlier version of this comment claimed otherwise.  What cannot hold at once,
+ * unless the Sigma_e agree, is a common `b` AND the common `K` that
+ * inner-product invariance asserts, since K_e = Sigma_e b.  So imposing one
+ * slope would quietly abandon the invariance the method rests on.  Instead the
+ * b_e are given a hierarchical prior,
  *
  *     b_e ~ N(b_bar, diag(sd_b)^2),
  *
@@ -64,10 +69,18 @@
  *
  * ---- Where Sigma^{-1} survives, and why it must -----------------------------
  *
- * In the *likelihood* Sigma now enters only through quadratic forms
- * `b' Sigma b`, never through its inverse.  That closes the
- * generated-regressor channel and makes the positivity constraint on the
- * conditional variances far better conditioned.
+ * In the conditional mean of Y, Sigma no longer appears at all, which is the
+ * point: that closes the generated-regressor channel and makes the positivity
+ * constraint on the conditional variances far better conditioned.
+ *
+ * It is not true that the inverse leaves the likelihood.  An earlier version of
+ * this comment said so, and two lines below contradict it: `quad_form_inv_chol`
+ * weights the likelihood for the environment means, and `b0_quad` carries
+ * Sigma_0^{-1} into every conditional variance (see the paragraph on the target
+ * inverse further down).  What changes is where it acts -- a fixed weight and a
+ * variance anchor, rather than a regressor inside the mean -- which is the
+ * difference between feasible GLS and a generated regressor, not the difference
+ * between using an inverse and not using one.
  *
  * It does **not** disappear from the target-domain prediction, and an earlier
  * version of this model that removed it there was wrong.  Writing the target

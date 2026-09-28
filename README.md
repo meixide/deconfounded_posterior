@@ -102,8 +102,8 @@ them, so reproducing that one table serially on a laptop is about 36 hours.
 | **Table 3** — simulation-based calibration (`tab:sbc`) | `sbatch slurm/12_sbc.sh` | — | 12 h |
 | **Table 4** — BRFSS case study (`tab:brfss`) | `sbatch --array=1-52 slurm/06_case_study.sh brfss` | 52 | 6 h |
 | Supplement, contraction rate (`tab:contractionfull`) | `sbatch slurm/13_contraction.sh` | — | 4 h |
-| Supplement, environment budget | `sbatch --array=... slurm/04_env_budget.sh` | — | 20 h |
-| Supplement, split extrapolation | `sbatch --array=... slurm/16_split_extrapolation.sh` | — | 5.5 h |
+| Supplement, environment budget | `sbatch --array=1-8 slurm/04_env_budget.sh --n-rep=20` | 8 | 20 h |
+| Supplement, split extrapolation | `sbatch --array=1-60%17 slurm/16_split_extrapolation.sh brfss gi_hd` | 60 | 5.5 h |
 
 A QoS normally caps how many jobs a user may have *submitted*, not merely
 running, so a 288-index array can be refused outright even with `%48`
