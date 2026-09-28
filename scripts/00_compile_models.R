@@ -14,8 +14,15 @@
 ## checkout with no usable model at all: the loop therefore records failures
 ## and reports them at the end rather than aborting on the first one.
 ##
+## Only the models the manuscript depends on are built by default.  There is one
+## optional model, `gi_hd_fullcov.stan`, which two standalone tests use and no
+## table does; it needs a newer StanHeaders than rstan 2.32.3 ships with, so on
+## a stock installation it fails.  Reporting that failure to someone who only
+## wants to reproduce the paper is noise that reads like a broken package, so it
+## is built only when asked for.
+##
 ## Usage:
-##   Rscript scripts/00_compile_models.R [--force] [--required-only]
+##   Rscript scripts/00_compile_models.R [--force] [--with-optional]
 
 local({
   args <- grep("^--file=", commandArgs(FALSE), value = TRUE)
@@ -26,7 +33,9 @@ root <- bgi_bootstrap()
 
 cli <- commandArgs(trailingOnly = TRUE)
 force <- "--force" %in% cli
-required_only <- "--required-only" %in% cli
+## Required-only is the default; --required-only is still accepted so that any
+## existing invocation keeps working.
+required_only <- !("--with-optional" %in% cli)
 
 ## ---- Toolchain check ---------------------------------------------------
 ## rstan and StanHeaders are versioned together, and an installation that
@@ -112,7 +121,6 @@ for (m in models) {
 }
 say("")
 say("Compiled models are in ", file.path(root, "results", "compiled"))
-message("\nCompiled models are in ", file.path(root, "results", "compiled"))
 
 if (length(failures) == 0L) {
   say("RESULT: every model compiled.")
@@ -140,7 +148,7 @@ if (length(failures) > 0L) {
   say("RESULT: every required model compiled; one optional model did not.")
   message(
     "\nEvery required model compiled.  The failure above is in an optional\n",
-    "model used only by tests/test_plugin_vs_fullcov.R and\n",
-    "tests/test_gamma_coverage_sources.R; every table in the manuscript can\n",
-    "still be reproduced.")
+    "model, requested with --with-optional and used only by\n",
+    "tests/test_plugin_vs_fullcov.R and tests/test_gamma_coverage_sources.R;\n",
+    "every table in the manuscript can still be reproduced.")
 }
