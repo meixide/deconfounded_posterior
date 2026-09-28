@@ -15,6 +15,13 @@
 #
 # CESGA FinisTerrae III.  Submit from the new_code directory, e.g.
 #     sbatch --array=1-80%40 slurm/01_support_recovery.sh --n-rep=20 --small
+#
+# Compile first, once, or every task in the array stops in its first seconds:
+#
+#     Rscript scripts/00_compile_models.R --force
+#
+# A task checks the compiled cache and refuses a stale one rather than
+# rebuilding it, because eighty tasks writing the same cache would race.
 #-----------------------------------------------------------------------
 #SBATCH --job-name=bgi_support
 #SBATCH --output=logs/support-%A_%a.out

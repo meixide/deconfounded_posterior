@@ -91,6 +91,18 @@ minutes.
 
 ### Needs a cluster
 
+**Compile first, once, on the cluster:**
+
+```bash
+Rscript scripts/00_compile_models.R --force
+```
+
+Every array task checks the compiled cache and stops if the `.stan` file is
+newer, rather than rebuilding it: forty tasks compiling the same model into the
+same file would race. So a stale cache fails the whole array at once, in the
+first two seconds, with a message saying exactly this. Run the line above after
+any `git pull` that touched `stan/`, and before the first `sbatch`.
+
 Every table in the manuscript is here. The reason is arithmetic, not
 convenience: one replication of the support-recovery study is a BGI fit plus
 nine baselines and took **54 minutes** (*measured*), and Table 2 is forty of
